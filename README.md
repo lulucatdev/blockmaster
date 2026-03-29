@@ -7,7 +7,7 @@ A Chrome extension that replaces the "views/analytics" button on X (Twitter) pos
 ## Features
 
 - **One-Click Block**: Replace the analytics/views button with a simple "block" button on every post
-- **Confirmation Dialog**: Optional confirmation before blocking to prevent accidental blocks
+- **Instant Action**: Click once to block immediately - no confirmation dialogs
 - **Smart Feedback**: Toast notifications for success/error states with rate limiting detection
 - **Auto-Remove**: Posts fade out and are removed from the timeline immediately after blocking
 - **Session Stats**: Popup shows how many users you've blocked in the current session
@@ -33,12 +33,11 @@ The extension will be published to the Chrome Web Store for easy one-click insta
 
 1. Navigate to [x.com](https://x.com) or [twitter.com](https://twitter.com)
 2. Each post will have a red "block" button where the analytics button used to be
-3. Click the "block" button
-4. If enabled, a confirmation dialog appears: "确定要屏蔽 @username 吗？"
-5. The button text changes to "..." while processing
-6. On success:
+3. Click the "block" button to instantly block the user
+4. The button text changes to "..." while processing
+5. On success:
    - Button shows "blocked"
-   - Toast notification appears: "已屏蔽 @username"
+   - Toast notification appears: "Blocked @username"
    - The post fades out and is removed from the timeline
 
 ### Button States
@@ -55,8 +54,7 @@ Click the BlockMaster icon in the Chrome toolbar to open the settings popup:
 
 | Setting | Description | Default |
 |---------|-------------|---------|
-| **Confirmation Dialog** | Show confirmation before blocking | Enabled |
-| **Remove After Block** | Automatically remove post after blocking | Enabled |
+| **Remove After Block** | Automatically remove post from timeline after blocking | Enabled |
 | **Show Notifications** | Display success/error toast messages | Enabled |
 
 ## How It Works
