@@ -164,7 +164,7 @@ This is the same endpoint used by X's web interface, accessed via the user's act
 
 ### Rate Limited
 
-If you see "操作过于频繁，请稍后再试":
+If you see "Rate limited. Please try again later":
 - X has rate-limited your account
 - Wait 1-2 minutes before blocking again
 - The extension will automatically calculate the retry time
