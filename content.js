@@ -58,6 +58,20 @@
   }
 
   /**
+   * Check if current page is a timeline (not a tweet detail page)
+   * Timeline: x.com/home, x.com/, x.com/following, x.com/username
+   * Detail: x.com/username/status/123456789
+   */
+  function isTimelinePage() {
+    const path = window.location.pathname;
+    // Exclude status/tweet detail pages
+    if (path.includes('/status/')) return false;
+    // Exclude individual tweet permalinks (pattern: /username/status/123)
+    if (/^\/[^\/]+\/status\/\d+/.test(path)) return false;
+    return true;
+  }
+
+  /**
    * Load user settings from storage
    */
   async function loadSettings() {
@@ -347,6 +361,12 @@
   function processPost(article) {
     if (!article || isProcessed(article)) return;
 
+    // Skip if not on timeline page
+    if (!isTimelinePage()) {
+      log('Skipping post processing - not on timeline page');
+      return;
+    }
+
     // Find the analytics button
     const analyticsBtn = article.querySelector(CONFIG.SELECTORS.analyticsButton);
     if (!analyticsBtn) return;
@@ -590,6 +610,28 @@
         clearInterval(checkContextValidity);
       }
     }, 1000);
+
+    // Listen for URL changes (SPA navigation)
+    // X is a single-page app, URL changes without page reload
+    let lastUrl = location.href;
+    const urlObserver = new MutationObserver(() => {
+      const currentUrl = location.href;
+      if (currentUrl !== lastUrl) {
+        lastUrl = currentUrl;
+        log('URL changed to:', currentUrl);
+        
+        if (isTimelinePage()) {
+          // Navigated back to timeline, resume processing
+          log('Navigated to timeline, resuming processing');
+          scanPosts();
+        } else {
+          // Navigated to detail page, skip processing
+          log('Navigated to detail page, pausing processing');
+        }
+      }
+    });
+    urlObserver.observe(document, { subtree: true, childList: true });
+    state.cleanupFns.push(() => urlObserver.disconnect());
   }
 
   // Start initialization
