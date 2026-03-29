@@ -37,9 +37,9 @@
   // State
   const state = {
     settings: {
-      confirmBeforeBlock: true,
       removeAfterBlock: true,
       showNotification: true,
+      keyboardShortcut: true, // Enable 'B' key to block focused post
     },
     session: {
       blockedCount: 0,
@@ -48,6 +48,7 @@
     },
     observer: null,
     cleanupFns: [],
+    focusedPost: null, // Track currently focused post for keyboard shortcut
   };
 
   /**
@@ -653,6 +654,58 @@
     });
     urlObserver.observe(document, { subtree: true, childList: true });
     state.cleanupFns.push(() => urlObserver.disconnect());
+
+    // Keyboard shortcut: Press 'B' to block the focused/visible post
+    const keyboardHandler = (e) => {
+      if (!state.settings.keyboardShortcut) return;
+      if (e.key !== 'b' && e.key !== 'B') return;
+      if (e.target.matches('input, textarea, [contenteditable]')) return; // Don't trigger when typing
+      
+      const focusedPost = getFocusedPost();
+      if (focusedPost) {
+        const blockBtn = focusedPost.querySelector('[data-testid="blockmaster-block-btn"]');
+        if (blockBtn && !blockBtn.classList.contains('blockmaster-blocked')) {
+          e.preventDefault();
+          blockBtn.click();
+          log('Blocked via keyboard shortcut');
+        }
+      }
+    };
+    document.addEventListener('keydown', keyboardHandler);
+    state.cleanupFns.push(() => document.removeEventListener('keydown', keyboardHandler));
+  }
+
+  /**
+   * Get the currently focused/visible post in viewport
+   */
+  function getFocusedPost() {
+    const posts = document.querySelectorAll(CONFIG.SELECTORS.article);
+    let bestPost = null;
+    let bestScore = -Infinity;
+    
+    posts.forEach(post => {
+      const rect = post.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      
+      // Calculate how centered the post is in viewport
+      const postCenter = rect.top + rect.height / 2;
+      const viewportCenter = viewportHeight / 2;
+      const distanceFromCenter = Math.abs(postCenter - viewportCenter);
+      
+      // Must be at least partially visible
+      if (rect.bottom > 0 && rect.top < viewportHeight) {
+        // Higher score for posts closer to center and larger visible area
+        const visibleHeight = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0);
+        const score = visibleHeight - distanceFromCenter;
+        
+        if (score > bestScore) {
+          bestScore = score;
+          bestPost = post;
+        }
+      }
+    });
+    
+    return bestPost;
   }
 
   // Start initialization

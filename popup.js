@@ -6,9 +6,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
   // Default settings
   const defaultSettings = {
-    confirmBeforeBlock: true,
     removeAfterBlock: true,
     showNotification: true,
+    keyboardShortcut: true,
   };
 
   // Load settings from storage
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('blockedCount').textContent = stats.blockedCount || 0;
 
   // Setup toggles
-  setupToggle('confirmToggle', 'confirmBeforeBlock', settings);
   setupToggle('removeToggle', 'removeAfterBlock', settings);
   setupToggle('notifyToggle', 'showNotification', settings);
+  setupToggle('keyboardToggle', 'keyboardShortcut', settings);
 });

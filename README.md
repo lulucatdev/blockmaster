@@ -56,6 +56,17 @@ Click the BlockMaster icon in the Chrome toolbar to open the settings popup:
 |---------|-------------|---------|
 | **Remove After Block** | Automatically remove post from timeline after blocking | Enabled |
 | **Show Notifications** | Display success/error toast messages | Enabled |
+| **Keyboard Shortcut (B)** | Press 'B' to block the focused post | Enabled |
+
+### Keyboard Shortcut
+
+Press **B** to instantly block the post currently in focus (centered in viewport):
+
+1. Scroll to the post you want to block
+2. Press **B** key
+3. The post is blocked and removed automatically
+
+**Note**: The shortcut is disabled when typing in input fields or textareas.
 
 ## How It Works
 
