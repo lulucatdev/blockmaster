@@ -20,10 +20,12 @@
       block: 'block',
       blocking: '...',
       blocked: 'blocked',
-      confirmTitle: '确认屏蔽',
-      confirmMessage: (username) => `确定要屏蔽 @${username} 吗？`,
-      rateLimited: '操作过于频繁，请稍后再试',
-      error: '屏蔽失败，请重试',
+      confirmTitle: 'Confirm Block',
+      confirmMessage: (username) => `Block @${username}?`,
+      rateLimited: 'Rate limited. Please try again later',
+      error: 'Block failed. Please retry',
+      networkError: 'Network error. Please check your connection',
+      blockedSuccess: (username) => `Blocked @${username}`,
     },
     API: {
       BLOCK_ENDPOINT: 'https://x.com/i/api/1.1/blocks/create.json',
@@ -226,11 +228,6 @@
       return;
     }
 
-    // Show confirmation
-    if (!showConfirmDialog(username)) {
-      return;
-    }
-
     // Update UI state
     button.classList.add('blockmaster-processing');
     const textSpan = button.querySelector('.blockmaster-text');
@@ -246,7 +243,7 @@
       if (result.networkError) {
         textSpan.textContent = originalText;
         button.classList.remove('blockmaster-processing');
-        showNotification('网络错误，请检查网络连接', 'error');
+        showNotification(CONFIG.TEXT.networkError, 'error');
         return;
       }
       
@@ -259,7 +256,7 @@
         button.classList.add('blockmaster-blocked');
         button.classList.remove('blockmaster-processing');
         
-        showNotification(`已屏蔽 @${username}`);
+        showNotification(CONFIG.TEXT.blockedSuccess(username));
         log('Blocked user:', username);
 
         // Remove post immediately (no placeholder)
@@ -276,7 +273,7 @@
         state.session.rateLimitedUntil = Date.now() + (retryAfter * 1000);
         textSpan.textContent = originalText;
         button.classList.remove('blockmaster-processing');
-        showNotification(CONFIG.TEXT.rateLimited, 'error');
+        showNotification(`${CONFIG.TEXT.rateLimited} (${retryAfter}s)`, 'error');
       } else {
         // Other error
         textSpan.textContent = originalText;
@@ -298,7 +295,7 @@
   async function blockUser(username) {
     const csrfToken = getCSRFToken();
     if (!csrfToken) {
-      return { success: false, error: '未登录或会话已过期' };
+      return { success: false, error: 'Not logged in or session expired' };
     }
 
     try {
@@ -324,7 +321,7 @@
           success: false, 
           rateLimited: true, 
           retryAfter: waitSeconds,
-          error: '操作过于频繁'
+          error: 'Rate limited'
         };
       }
 
@@ -335,13 +332,13 @@
       const errorData = await response.json().catch(() => ({}));
       return { 
         success: false, 
-        error: errorData.errors?.[0]?.message || `请求失败 (${response.status})` 
+        error: errorData.errors?.[0]?.message || `Request failed (${response.status})` 
       };
 
     } catch (error) {
       // Detect network errors specifically
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        return { success: false, networkError: true, error: '网络连接失败' };
+        return { success: false, networkError: true, error: 'Network connection failed' };
       }
       return { success: false, error: error.message };
     }

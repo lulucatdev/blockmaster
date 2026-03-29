@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "BlockMaster",
   "version": "1.1.0",
-  "description": "一键屏蔽 X (Twitter) 用户。将浏览量按钮替换为屏蔽按钮。",
+  "description": "One-click user blocking for X (Twitter). Replaces the analytics button with a block button.",
   "permissions": [
     "storage"
   ],
