@@ -1,72 +1,83 @@
-# BlockMaster
+# BlockMaster 🔨
 
-A Chrome extension that replaces the "views/analytics" button on X (Twitter) posts with a one-click "block" button.
+> **Block an X user as easy as liking a post.**
 
-![BlockMaster Screenshot](docs/screenshot.png)
+Tired of seeing tweets from people you'd rather not? BlockMaster turns the useless "analytics" button into a **one-click nuke button**. No confirmation dialogs. No extra clicks. Just **block** and move on.
 
-## Features
+## Why BlockMaster?
 
-- **One-Click Block**: Replace the analytics/views button with a simple "block" button on every post
-- **Instant Action**: Click once to block immediately - no confirmation dialogs
-- **Smart Feedback**: Toast notifications for success/error states with rate limiting detection
-- **Auto-Remove**: Posts fade out and are removed from the timeline immediately after blocking
-- **Session Stats**: Popup shows how many users you've blocked in the current session
-- **Persistent Settings**: User preferences are saved to Chrome storage
+X's native block flow is annoying:
+1. Click the three dots
+2. Scroll through a menu
+3. Click "Block"
+4. Confirm
+5. Why so many steps???
 
-## Installation
+**BlockMaster:** See a post → Click "block" → Gone. That's it.
 
-### Load in Developer Mode
+## Features That slap
 
-1. Open Chrome and navigate to `chrome://extensions/`
-2. Enable "Developer mode" toggle in the top right corner
-3. Click "Load unpacked"
-4. Select the `blockmaster-ext` folder
-5. The extension is now loaded and active
+| Feature | What it does |
+|---------|--------------|
+| ⚡ **Instant Block** | One click. No dialogs. No friction. |
+| 🎯 **Smart Focus** | Press `B` to block whatever post is centered on your screen |
+| 🗑️ **Auto-Vanish** | Blocked posts immediately fade out and disappear |
+| 🔗 **Quick View** | Toast notification has a "View" button to visit their profile (for unblock) |
+| 📊 **Stats** | See how many people you've yeeted this session |
+| 🧠 **Rate Limit Aware** | Detects X's "slow down" messages and shows retry time |
 
-### Chrome Web Store (Coming Soon)
+## Get It Running
 
-The extension will be published to the Chrome Web Store for easy one-click installation.
+### Developer Mode (Right Now)
 
-## Usage
+1. Open Chrome → `chrome://extensions/`
+2. Flip the **Developer mode** switch (top right)
+3. Click **"Load unpacked"**
+4. Select this folder
+5. Done. Go block some people.
 
-### Basic Flow
+### Chrome Web Store (Soon™)
 
-1. Navigate to [x.com](https://x.com) or [twitter.com](https://twitter.com)
-2. Each post will have a red "block" button where the analytics button used to be
-3. Click the "block" button to instantly block the user
-4. The button text changes to "..." while processing
-5. On success:
-   - Button shows "blocked"
-   - Toast notification appears: "Blocked @username"
-   - The post fades out and is removed from the timeline
+We're working on it. For now, use the manual method above.
 
-### Button States
+## How to Use This Thing
 
-| State | Text | Description |
-|-------|------|-------------|
-| Default | **block** | Ready to block the user |
-| Processing | **...** | Sending block request |
-| Blocked | **blocked** | User successfully blocked |
+### The Classic Way
 
-### Settings
+1. Scroll X like normal
+2. See someone you don't vibe with? 
+3. Click the **red "block" button** (replaces the useless analytics button)
+4. They disappear instantly. Poof. Gone.
 
-Click the BlockMaster icon in the Chrome toolbar to open the settings popup:
+### Button States Explained
 
-| Setting | Description | Default |
-|---------|-------------|---------|
-| **Remove After Block** | Automatically remove post from timeline after blocking | Enabled |
-| **Show Notifications** | Display success/error toast messages | Enabled |
-| **Keyboard Shortcut (B)** | Press 'B' to block the focused post | Enabled |
+| State | What it means |
+|-------|---------------|
+| 🔴 **block** | Ready to yeet this user |
+| ⏳ **...** | Nuking them from orbit... |
+| ✅ **blocked** | Successfully removed from your life |
 
-### Keyboard Shortcut
+### The Lazy Way (Keyboard Shortcut)
 
-Press **B** to instantly block the post currently in focus (centered in viewport):
+Too lazy to move your mouse?
 
-1. Scroll to the post you want to block
-2. Press **B** key
-3. The post is blocked and removed automatically
+1. Scroll so the annoying post is in the middle of your screen
+2. Press **`B`**
+3. Post deleted. User blocked. Timeline cleaned.
 
-**Note**: The shortcut is disabled when typing in input fields or textareas.
+Works great when speed-running your block list.
+
+### Settings You Can Tweak
+
+Click the BlockMaster icon in Chrome toolbar:
+
+| Setting | What it does | Default |
+|---------|--------------|---------|
+| **Remove After Block** | Make posts disappear immediately | ✅ On |
+| **Show Notifications** | Toast messages for success/fails | ✅ On |
+| **Keyboard Shortcut (B)** | Enable the 'B' key for blocking | ✅ On |
+
+**Pro tip:** Disable notifications if you're blocking a *lot* of people at once. Less noise, more blocking.
 
 ## How It Works
 
@@ -152,39 +163,42 @@ Body: screen_name={username}&skip_status=1
 
 This is the same endpoint used by X's web interface, accessed via the user's active session.
 
-## Limitations
+## Known Quirks
 
-1. **Rate Limiting**: X imposes rate limits on block operations. The extension detects HTTP 429 and shows appropriate messages.
+### The Boring Technical Stuff
 
-2. **DOM Changes**: X frequently updates their frontend. If the extension stops working, the CSS selectors may need updating.
+1. **Rate Limiting**: X gets mad if you block too fast. The extension handles this gracefully with retry timers.
 
-3. **Login Required**: User must be logged into X for the block API to work.
+2. **DOM Changes**: X updates their code frequently. If buttons disappear, they probably changed their HTML structure. File an issue.
 
-4. **Bearer Token**: The hardcoded bearer token is X's public web client token. If X rotates this, the extension will need an update.
+3. **Must Be Logged In**: Obviously. You can't block people if you're not logged in.
 
-5. **React Virtual DOM**: X uses React's virtualized list. The extension handles this by immediately removing posts rather than hiding them.
+4. **Bearer Token**: That long string of gibberish is X's public web client token. Everyone using x.com has the same one. It's fine.
 
-## Troubleshooting
+## When Things Break
 
-### Extension Not Working
+### "It's not working!"
 
-1. **Check Login**: Ensure you're logged into X
-2. **Reload Extension**: Go to `chrome://extensions/` and click the reload icon on BlockMaster
-3. **Check Console**: Open DevTools (F12) and look for `[BlockMaster]` logs
-4. **Enable Debug**: Set `CONFIG.DEBUG = true` in `content.js` for verbose logging
+Try this checklist:
 
-### Rate Limited
+1. **Are you logged into X?** No? Log in.
+2. **Reload the extension**: `chrome://extensions/` → click the 🔄 icon on BlockMaster
+3. **Check the console**: F12 → Console → search for `[BlockMaster]`
+4. **Still broken?**: [Open an issue](https://github.com/lulucatdev/blockmaster/issues)
 
-If you see "Rate limited. Please try again later":
-- X has rate-limited your account
-- Wait 1-2 minutes before blocking again
-- The extension will automatically calculate the retry time
+### "Rate limited. Please try again later"
 
-### Button Not Appearing
+X is telling you to chill. You blocked too many people too fast.
 
-1. X may have changed their DOM structure
-2. Check if the analytics button exists (it may be hidden for some posts)
-3. Try scrolling to load more posts and trigger the observer
+- Wait a minute or two
+- The toast will show you exactly how long to wait
+- Go grab a coffee, come back, continue your crusade
+
+### "I don't see the block button"
+
+Some posts don't have analytics buttons (replies, promoted tweets, etc.). BlockMaster only appears where the analytics button would be.
+
+Also, try scrolling. The extension needs to "see" the post first.
 
 ## Development
 
