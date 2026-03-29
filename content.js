@@ -186,9 +186,9 @@
   }
 
   /**
-   * Show notification toast
+   * Show notification toast with optional view button
    */
-  function showNotification(message, type = 'success') {
+  function showNotification(message, type = 'success', username = null) {
     if (!state.settings.showNotification) return;
 
     // Remove existing toasts to prevent stacking
@@ -197,7 +197,25 @@
 
     const toast = document.createElement('div');
     toast.className = `blockmaster-toast blockmaster-toast--${type}`;
-    toast.textContent = message;
+    
+    // Message text
+    const messageSpan = document.createElement('span');
+    messageSpan.textContent = message;
+    toast.appendChild(messageSpan);
+    
+    // Add view button if username provided
+    if (username) {
+      const viewBtn = document.createElement('button');
+      viewBtn.className = 'blockmaster-toast__btn';
+      viewBtn.textContent = 'View';
+      viewBtn.onclick = (e) => {
+        e.stopPropagation();
+        window.open(`https://x.com/${username}`, '_blank');
+        toast.remove();
+      };
+      toast.appendChild(viewBtn);
+    }
+    
     document.body.appendChild(toast);
 
     // Trigger animation
@@ -205,10 +223,16 @@
       toast.classList.add('blockmaster-toast--visible');
     });
 
-    setTimeout(() => {
+    // Auto-remove after 10 seconds
+    const removeTimeout = setTimeout(() => {
       toast.classList.remove('blockmaster-toast--visible');
       setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    }, 10000);
+    
+    // Clear timeout if user interacts with toast
+    toast.addEventListener('mouseenter', () => {
+      clearTimeout(removeTimeout);
+    });
   }
 
   /**
@@ -256,7 +280,7 @@
         button.classList.add('blockmaster-blocked');
         button.classList.remove('blockmaster-processing');
         
-        showNotification(CONFIG.TEXT.blockedSuccess(username));
+        showNotification(CONFIG.TEXT.blockedSuccess(username), 'success', username);
         log('Blocked user:', username);
 
         // Remove post immediately (no placeholder)
