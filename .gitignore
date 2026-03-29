@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Node.js (if you add build tools later)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Chrome Extension build artifacts
+dist/
+*.zip
+*.crx
+
+# Logs
+logs/
+*.log
+
+# Local env files
+.env
+.env.local
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Extension packaging keys
+*.pem
